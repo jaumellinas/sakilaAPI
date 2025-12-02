@@ -83,7 +83,7 @@ async def create_customer(customer: CustomerCreate):
         try:
             query = """
                 INSERT INTO customer (store_id, first_name, last_name, email, address_id, active, create_date)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
             """
             cursor.execute(query, (
                 customer.store_id,
@@ -96,7 +96,7 @@ async def create_customer(customer: CustomerCreate):
             conn.commit()
 
             customer_id = cursor.lastrowid
-            cursor.execute("SELECT * FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT * FROM customer WHERE customer_id = %s", (customer_id,))
             row = cursor.fetchone()
 
             if not row:
@@ -124,7 +124,7 @@ async def get_customers(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "SELECT * FROM customer ORDER BY customer_id LIMIT ? OFFSET ?",
+                "SELECT * FROM customer ORDER BY customer_id LIMIT %s OFFSET %s",
                 (limit, skip)
             )
             rows = cursor.fetchall()
@@ -152,7 +152,7 @@ async def get_customer(customer_id: int):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT * FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT * FROM customer WHERE customer_id = %s", (customer_id,))
             row = cursor.fetchone()
 
             if not row:
@@ -177,7 +177,7 @@ async def update_customer(customer_id: int, customer: CustomerUpdate):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = %s", (customer_id,))
             if not cursor.fetchone():
                 raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -185,22 +185,22 @@ async def update_customer(customer_id: int, customer: CustomerUpdate):
             values = []
 
             if customer.store_id is not None:
-                updates.append("store_id = ?")
+                updates.append("store_id = %s")
                 values.append(customer.store_id)
             if customer.first_name is not None:
-                updates.append("first_name = ?")
+                updates.append("first_name = %s")
                 values.append(customer.first_name)
             if customer.last_name is not None:
-                updates.append("last_name = ?")
+                updates.append("last_name = %s")
                 values.append(customer.last_name)
             if customer.email is not None:
-                updates.append("email = ?")
+                updates.append("email = %s")
                 values.append(customer.email)
             if customer.address_id is not None:
-                updates.append("address_id = ?")
+                updates.append("address_id = %s")
                 values.append(customer.address_id)
             if customer.active is not None:
-                updates.append("active = ?")
+                updates.append("active = %s")
                 values.append(customer.active)
 
             if not updates:
@@ -209,11 +209,11 @@ async def update_customer(customer_id: int, customer: CustomerUpdate):
             updates.append("last_update = NOW()")
             values.append(customer_id)
 
-            query = f"UPDATE customer SET {', '.join(updates)} WHERE customer_id = ?"
+            query = f"UPDATE customer SET {', '.join(updates)} WHERE customer_id = %s"
             cursor.execute(query, tuple(values))
             conn.commit()
 
-            cursor.execute("SELECT * FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT * FROM customer WHERE customer_id = %s", (customer_id,))
             row = cursor.fetchone()
 
             return CustomerResponse(
@@ -235,11 +235,11 @@ async def delete_customer(customer_id: int):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = %s", (customer_id,))
             if not cursor.fetchone():
                 raise HTTPException(status_code=404, detail="Customer not found")
 
-            cursor.execute("DELETE FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("DELETE FROM customer WHERE customer_id = %s", (customer_id,))
             conn.commit()
 
             return None
@@ -258,7 +258,7 @@ async def create_rental(rental: RentalCreate):
         try:
             query = """
                 INSERT INTO rental (rental_date, inventory_id, customer_id, staff_id)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
             """
             cursor.execute(query, (
                 rental.rental_date,
@@ -269,7 +269,7 @@ async def create_rental(rental: RentalCreate):
             conn.commit()
 
             rental_id = cursor.lastrowid
-            cursor.execute("SELECT * FROM rental WHERE rental_id = ?", (rental_id,))
+            cursor.execute("SELECT * FROM rental WHERE rental_id = %s", (rental_id,))
             row = cursor.fetchone()
 
             return RentalResponse(
@@ -291,7 +291,7 @@ async def get_rental(rental_id: int):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT * FROM rental WHERE rental_id = ?", (rental_id,))
+            cursor.execute("SELECT * FROM rental WHERE rental_id = %s", (rental_id,))
             row = cursor.fetchone()
 
             if not row:
@@ -314,7 +314,7 @@ async def return_rental(rental_id: int):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT rental_id, return_date FROM rental WHERE rental_id = ?", (rental_id,))
+            cursor.execute("SELECT rental_id, return_date FROM rental WHERE rental_id = %s", (rental_id,))
             row = cursor.fetchone()
 
             if not row:
@@ -324,12 +324,12 @@ async def return_rental(rental_id: int):
                 raise HTTPException(status_code=400, detail="Rental already returned")
 
             cursor.execute(
-                "UPDATE rental SET return_date = NOW(), last_update = NOW() WHERE rental_id = ?",
+                "UPDATE rental SET return_date = NOW(), last_update = NOW() WHERE rental_id = %s",
                 (rental_id,)
             )
             conn.commit()
 
-            cursor.execute("SELECT * FROM rental WHERE rental_id = ?", (rental_id,))
+            cursor.execute("SELECT * FROM rental WHERE rental_id = %s", (rental_id,))
             row = cursor.fetchone()
 
             return RentalResponse(
@@ -353,15 +353,15 @@ async def get_customer_rentals(
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = ?", (customer_id,))
+            cursor.execute("SELECT customer_id FROM customer WHERE customer_id = %s", (customer_id,))
             if not cursor.fetchone():
                 raise HTTPException(status_code=404, detail="Customer not found")
 
             cursor.execute(
                 """SELECT * FROM rental 
-                   WHERE customer_id = ? 
+                   WHERE customer_id = %s 
                    ORDER BY rental_date DESC 
-                   LIMIT ? OFFSET ?""",
+                   LIMIT %s OFFSET %s""",
                 (customer_id, limit, skip)
             )
             rows = cursor.fetchall()
@@ -388,7 +388,7 @@ async def get_rentals(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1, 
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "SELECT * FROM rental ORDER BY rental_date DESC LIMIT ? OFFSET ?",
+                "SELECT * FROM rental ORDER BY rental_date DESC LIMIT %s OFFSET %s",
                 (limit, skip)
             )
             rows = cursor.fetchall()
