@@ -2,12 +2,13 @@ from fastapi import FastAPI, HTTPException, status, Query
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-import mariadb
+import pymysql
 from contextlib import contextmanager
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+pymysql.install_as_MySQLdb()
 
 class CustomerCreate(BaseModel):
     store_id: int
@@ -56,7 +57,9 @@ DB_CONFIG = {
     "port": int(os.getenv("MARIADB_PORT", "3306")),
     "user": os.getenv("MARIADB_USER", "root"),
     "password": os.getenv("MARIADB_PASSWORD", ""),
-    "database": os.getenv("MARIADB_DATABASE", "sakila")
+    "database": os.getenv("MARIADB_DATABASE", "sakila"),
+    "charset": "utf8mb4",
+    "cursorclass": pymysql.cursors.Cursor
 }
 
 app = FastAPI(title="Sakila API", version="1.0.0")
@@ -65,9 +68,9 @@ app = FastAPI(title="Sakila API", version="1.0.0")
 def get_db_connection():
     conn = None
     try:
-        conn = mariadb.connect(**DB_CONFIG)
+        conn = pymysql.connect(**DB_CONFIG)
         yield conn
-    except mariadb.Error as e:
+    except pymysql.Error as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     finally:
         if conn:
@@ -110,7 +113,7 @@ async def create_customer(customer: CustomerCreate):
                 create_date=row[7],
                 last_update=row[8]
             )
-        except mariadb.IntegrityError as e:
+        except pymysql.IntegrityError as e:
             raise HTTPException(status_code=400, detail=f"Integrity error: {str(e)}")
         finally:
             cursor.close()
@@ -240,7 +243,7 @@ async def delete_customer(customer_id: int):
             conn.commit()
 
             return None
-        except mariadb.IntegrityError:
+        except pymysql.IntegrityError:
             raise HTTPException(
                 status_code=409,
                 detail="Cannot delete customer with existing rentals"
@@ -278,7 +281,7 @@ async def create_rental(rental: RentalCreate):
                 staff_id=row[5],
                 last_update=row[6]
             )
-        except mariadb.IntegrityError as e:
+        except pymysql.IntegrityError as e:
             raise HTTPException(status_code=400, detail=f"Integrity error: {str(e)}")
         finally:
             cursor.close()
@@ -409,7 +412,7 @@ async def get_rentals(skip: int = Query(0, ge=0), limit: int = Query(100, ge=1, 
 @app.get("/")
 async def root():
     return {
-        "message": "sakilaAPI v1.0.0",
+        "message": "Sakila API v1.0.0",
         "endpoints": {
             "customers": "/api/v1/customers",
             "rentals": "/api/v1/rentals",
