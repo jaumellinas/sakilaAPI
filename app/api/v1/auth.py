@@ -14,7 +14,12 @@ import pymysql
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Autenticación"])
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register",
+             status_code=status.HTTP_201_CREATED,
+             name="Registrar usuario",
+             summary="Registra un usuario de la API en la base de datos",
+             description="Registra el usuario, el e-mail y la contraseña de un usuario en la base de datos y le da acceso a la misma a través de un token"
+             )
 async def register(user: UserCreate):
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -38,7 +43,12 @@ async def register(user: UserCreate):
         finally:
             cursor.close()
 
-@router.post("/token", response_model=Token)
+@router.post("/token",
+             response_model=Token,
+             name="Autenticar usuario",
+             summary="Autentica un usuario de la API y le devuelve su token",
+             description="Autentica un usuario de la API comprobando si su usuario y su contraseña existen en la base de datos. Si es así, se le devuelve su token de autenticación"
+             )
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(
         form_data.username,
