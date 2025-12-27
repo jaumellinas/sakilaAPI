@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8081:8081"
+    env_file: .env
+    networks:
+      - sql
+
+networks:
+  sql:
+    external: true
