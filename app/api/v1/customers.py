@@ -95,7 +95,7 @@ async def get_customers(
             if limit is None:
                 cursor.execute(
                     "SELECT * FROM customer ORDER BY customer_id "
-                    "OFFSET %s",
+                    "LIMIT 18446744073709551615 OFFSET %s",
                     (skip,)
                 )
             else:

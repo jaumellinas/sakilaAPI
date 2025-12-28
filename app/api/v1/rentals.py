@@ -80,7 +80,7 @@ async def get_rentals(
             if limit is None:
                 cursor.execute(
                     "SELECT * FROM rental ORDER BY rental_date DESC "
-                    "OFFSET %s",
+                    "LIMIT 18446744073709551615 OFFSET %s",
                     (skip,)
                 )
             else:
