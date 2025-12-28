@@ -32,5 +32,5 @@ async def root():
     }
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT"))
+    port = int(os.getenv("FASTAPI_PORT"))
     uvicorn.run(app, host="0.0.0.0", port=port)
