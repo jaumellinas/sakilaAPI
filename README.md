@@ -343,7 +343,7 @@ Explicado esto, el proceso de despliegue es el siguiente:
 4. Ejecutar el comando ```docker compose build --no-cache```.  
 5. Cuando el proyecto termine de descargarse y configurarse, deployear la aplicación con el comando ```docker compose up```.  
 
-Con estos pasos, tendríamos nuestra aplicación corriendo en el puerto 8081 de nuestro Docker. Para acceder a la aplicación en sí, accederemos al dashboard de Nginx Proxy Manager y crearemos una redirección de la URL http://sakilaweb-app-1:8001 a la URL de nuestra elección.
+Con estos pasos, tendríamos nuestra aplicación corriendo en el puerto 8081 de nuestro Docker. Para acceder a la aplicación en sí, accederemos al dashboard de Nginx Proxy Manager y crearemos una redirección de la URL http://sakilaweb-app-1:8081 a la URL de nuestra elección.
 
 En mi caso, y aprovechando un dominio que reservo para este tipo de experimentos, mi contenedor con la API apunta a https://apisakila.jaume.wtf.
 
