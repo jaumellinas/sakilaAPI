@@ -7,7 +7,7 @@ class UserCreate(BaseModel):
         ...,
         min_length=8,
         max_length=72,
-        description="Password must be between 8 and 72 characters"
+        description="La contraseña tiene que tener entre 8 y 72 caracteres"
     )
 
 class UserResponse(BaseModel):

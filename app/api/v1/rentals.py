@@ -71,17 +71,24 @@ async def create_rental(
 )
 async def get_rentals(
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(None, ge=1),
     current_user: User = Depends(get_current_user)
 ):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                "SELECT * FROM rental ORDER BY rental_date DESC "
-                "LIMIT %s OFFSET %s",
-                (limit, skip)
-            )
+            if limit is None:
+                cursor.execute(
+                    "SELECT * FROM rental ORDER BY rental_date DESC "
+                    "OFFSET %s",
+                    (skip,)
+                )
+            else:
+                cursor.execute(
+                    "SELECT * FROM rental ORDER BY rental_date DESC "
+                    "LIMIT %s OFFSET %s",
+                    (limit, skip)
+                )
             rows = cursor.fetchall()
 
             rentals = []
