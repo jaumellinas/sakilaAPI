@@ -11,13 +11,13 @@ Jaume Llinàs Sansó
 3. [Requisitos](#requisitos)  
 4. [Variables de entorno (.env)](#variables-de-entorno-env)  
 5. [Modelos de datos (Schemas)](#modelos-de-datos-schemas)  
-   1. [Customer (`app/schemas/customer.py`)](#customer-appschemascustomerpy)  
-   2. [Rental (`app/schemas/rental.py`)](#rental-appschemasrentalpy)  
-   3. [User (`app/schemasuserpy`)](#user-appschemasuserpy)  
+   1. [customer (`app/schemas/customer.py`)](#customer-appschemascustomerpy)  
+   2. [rental (`app/schemas/rental.py`)](#rental-appschemasrentalpy)  
+   3. [user (`app/schemasuserpy`)](#user-appschemasuserpy)  
 6. [Endpoints principales](#endpoints-principales)  
    1. [Autenticación y usuarios](#1-autenticación-y-usuarios)  
-   2. [Clientes (Customers)](#2-clientes-customers)  
-   3. [Reservas (Rentals)](#3-reservas-rentals)  
+   2. [Clientes (customers)](#2-clientes-customers)  
+   3. [Reservas (rentals)](#3-reservas-rentals)  
 7. [Despliegue en local](#despliegue-en-local)  
 8. [Despliegue en entorno cloud](#despliegue-en-entorno-cloud)  
 9. [Uso de IA y recursos](#uso-de-ia-y-recursos)
@@ -31,10 +31,10 @@ El proyecto **sakilaAPI** tiene como objetivo exponer una **API RESTful** sobre 
 
 El acceso a la API se controla mediante autenticación con **tokens JWT**, generados al iniciar sesión con credenciales válidas.  
 
-> [!IMPORTANT]
+> [!IMPORTANT]  
 > Para poder implementar autenticación en este proyecto, deberemos crear una tabla ```users``` en la propia base de datos ```sakila```. Yo he seguido este esquema:
 
-``` sql
+```sql
 CREATE TABLE user (
   user_id int NOT NULL AUTO_INCREMENT,
   username varchar(56) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE user (
   PRIMARY KEY (user_id),
   UNIQUE KEY username (username),
   UNIQUE KEY email (email)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+);
 ```
 
 ## Estructura del proyecto
@@ -80,26 +80,26 @@ sakilaAPI/
 ## Requisitos
 
 * Python 3.12+
-  * `fastapi`
-  * `uvicorn`
-  * `mariadb` o `mysqlclient`
-  * `pydantic`
-  * `python-dotenv`
-  * `passlib`
-  * `python-jose`
+  * fastapi
+  * uvicorn
+  * mariadb o mysqlclient
+  * pydantic
+  * python-dotenv
+  * passlib
+  * python-jose
 
 > [!IMPORTANT]  
-> Se asume que el usuario dispone de una base de datos **sakila** ya configurada y desplegada.
+> Esta guía de instalación asume que el usuario ya dispone de una base de datos a la que conectarse. Por tanto, toda la parte de instalación de MariaDB y el volcado de las bases de datos al programa es omitida.
 
 ## Variables de entorno (.env)
 
-* MARIADB_USER
-* MARIADB_PASSWORD
-* MARIADB_HOST
-* MARIADB_PORT
-* MARIADB_DATABASE
-* FASTAPI_PORT
-* SECRET_KEY
+* MARIADB_USER  
+* MARIADB_PASSWORD  
+* MARIADB_HOST  
+* MARIADB_PORT  
+* MARIADB_DATABASE  
+* FASTAPI_PORT  
+* SECRET_KEY  
 * ACCESS_TOKEN_EXPIRE_MINUTES
 
 ## Modelos de datos (Schemas)
@@ -110,11 +110,8 @@ Los modelos están definidos en `app/schemas/` y controlan la validación de dat
 - **rental:** creación y respuesta de reservas.  
 - **user:** registro y respuesta de usuarios autenticados.
 
-### Customer (`app/schemas/customer.py`)
+### customer (`app/schemas/customer.py`)
 
-Modelo que define las propiedades principales de los clientes.
-
-**Ejemplo JSON:**
 ```json
 {
   "store_id": 1,
@@ -126,17 +123,10 @@ Modelo que define las propiedades principales de los clientes.
 }
 ```
 
-**Campos destacados:**  
-`store_id`, `first_name`, `last_name`, `email`, `address_id`, `active`,  
-`customer_id`, `create_date`, `last_update`.
-
 ---
 
-### Rental (`app/schemas/rental.py`)
+### rental (`app/schemas/rental.py`)
 
-Modelo que representa las reservas de películas.
-
-**Ejemplo JSON:**
 ```json
 {
   "rental_date": "2024-12-02T10:00:00",
@@ -146,17 +136,10 @@ Modelo que representa las reservas de películas.
 }
 ```
 
-**Campos destacados:**  
-`rental_id`, `rental_date`, `inventory_id`, `customer_id`,  
-`return_date`, `staff_id`, `last_update`.
-
 ---
 
-### User (`app/schemas/user.py`)
+### user (`app/schemas/user.py`)
 
-Modelo que define el sistema de autenticación y registro.
-
-**Ejemplo JSON:**
 ```json
 {
   "username": "jllinass",
@@ -165,21 +148,20 @@ Modelo que define el sistema de autenticación y registro.
 }
 ```
 
-**Campos destacados:**  
-`user_id`, `username`, `email`, `disabled`.
-
 ## Endpoints principales
-### 1. **Autenticación y usuarios**  
-Archivo: `app/api/v1/auth.py`
+
+### 1. **Autenticación y usuarios (`user`)**  
+`app/api/v1/auth.py`
 
 | Método | Endpoint | Descripción |
 |---------|-----------|-------------|
 | `POST` | `/auth/register` | Crea un nuevo usuario en la base de datos |
 | `POST` | `/auth/login` | Autentica un usuario y devuelve un token JWT |
 
-#### Ejemplos
+---
 
-**Registrar usuario**
+**[Ejemplo A] - Registrar usuario**
+
 ```json
 POST /auth/register
 {
@@ -189,7 +171,8 @@ POST /auth/register
 }
 ```
 
-**Respuesta:**
+**[Ejemplo A] - Respuesta:**
+
 ```json
 {
   "user_id": 1,
@@ -199,7 +182,10 @@ POST /auth/register
 }
 ```
 
-**Login**
+---
+
+**[Ejemplo B] - Login**
+
 ```json
 POST /auth/login
 {
@@ -208,7 +194,8 @@ POST /auth/login
 }
 ```
 
-**Respuesta:**
+**[Ejemplo B] - Respuesta:**
+
 ```json
 {
   "access_token": "eyJhbGci...vdCI6IkpXVCJ9...",
@@ -222,8 +209,8 @@ POST /auth/login
 
 ---
 
-### 2. **Clientes (`Customers`)**  
-Archivo: `app/api/v1/customers.py`
+### 2. **Clientes (`customer`)**  
+`app/api/v1/customers.py`
 
 | Método | Endpoint | Descripción |
 |---------|-----------|-------------|
@@ -233,14 +220,29 @@ Archivo: `app/api/v1/customers.py`
 | `PUT` | `/customers/{customer_id}` | Actualiza los datos de un cliente existente |
 | `DELETE` | `/customers/{customer_id}` | Elimina un cliente |
 
-#### Ejemplos
+---
 
-**Obtener todos los clientes**
-```
+**[Ejemplo C] - Obtener todos los clientes**
+
+```json
 GET /customers/
+{
+  "customer_id": 1,
+  "store_id": 1,
+  "first_name": "MARY",
+  "last_name": "SMITH",
+  "email": "MARY.SMITH@sakilacustomer.org",
+  "address_id": 5,
+  "active": true,
+  "create_date": "2006-02-14T22:04:36",
+  "last_update": "2025-12-28T11:07:09"
+}
 ```
 
-**Crear nuevo cliente**
+---
+
+**[Ejemplo D] - Crear nuevo cliente**
+
 ```json
 POST /customers/
 {
@@ -253,7 +255,8 @@ POST /customers/
 }
 ```
 
-**Respuesta:**
+**[Ejemplo D] - Respuesta**
+
 ```json
 {
   "customer_id": 46,
@@ -270,8 +273,8 @@ POST /customers/
 
 ---
 
-### 3. **Reservas (`Rentals`)**  
-Archivo: `app/api/v1/rentals.py`
+### 3. **Reservas (`rentals`)**  
+`app/api/v1/rentals.py`
 
 | Método | Endpoint | Descripción |
 |---------|-----------|-------------|
@@ -280,9 +283,10 @@ Archivo: `app/api/v1/rentals.py`
 | `POST` | `/rentals/` | Crea una nueva reserva |
 | `DELETE` | `/rentals/{rental_id}` | Elimina una reserva |
 
-#### Ejemplos
+---
 
-**Crear nueva reserva**
+**[Ejemplo E] - Crear nueva reserva**
+
 ```json
 POST /rentals/
 {
@@ -293,7 +297,8 @@ POST /rentals/
 }
 ```
 
-**Respuesta:**
+**[Ejemplo E] - Respuesta**
+
 ```json
 {
   "rental_id": 78,
@@ -310,33 +315,33 @@ POST /rentals/
 
 Para documentar el despliegue de nuestras apps, asumiremos que el usuario no tiene ninguno de nuestros requisitos instalados excepto tener un despliegue operativo de una base de datos MariaDB o MySQL.
 
-El proceso para llevar a cabo el despliegue en local consiste en: 
-1. Instalar la última versión de [Python](https://www.python.org/downloads/).
-2. Instalar el [conector para C de MariaDB](https://mariadb.com/docs/connectors/mariadb-connector-c/mariadb-connector-c-guide) o [MySQL](https://dev.mysql.com/downloads/c-api/).
-3. Clonar nuestro proyecto de GitHub en la máquina.
-4. Abrir una terminal y navegar hasta el directorio donde se encuentra nuestra app. 
-5. En dicho directorio, crear un `venv` y activarlo.
-6. Instalar los requisitos con `pip install -r requirements.txt`
-7. Rellenar el archivo .env del proyecto con las variables necesarias.
-8. Ejecutar el comando `uvicorn main:app --reload`.
+El proceso para llevar a cabo el despliegue en local consiste en:  
+1. Instalar la última versión de [Python](https://www.python.org/downloads/).  
+2. Instalar el [conector para C de MariaDB](https://mariadb.com/docs/connectors/mariadb-connector-c/mariadb-connector-c-guide) o [MySQL](https://dev.mysql.com/downloads/c-api/).  
+3. Clonar nuestro proyecto de GitHub en la máquina.  
+4. Abrir una terminal y navegar hasta el directorio donde se encuentra nuestra app.  
+5. En dicho directorio, crear un `venv` y activarlo.  
+6. Instalar los requisitos con `pip install -r requirements.txt`  
+7. Rellenar el archivo .env del proyecto con las variables necesarias.  
+8. Ejecutar el comando `uvicorn main:app --reload`.  
 
 Asumiendo que en las variables de entorno hemos escogido el puerto 8000 para FastAPI, este proceso levantará nuestra API en la URL `http://127.0.0.1:8000`.
 
 ## Despliegue en entorno cloud
 
-De forma extra y siendo realizada esta parte tras haber acabado la actividad en sí, he dockerizado y desplegado la aplicación en un servidor VPS propio. Mi entorno de despliegue consiste en tres contenedores: 
-* ```sakila-api```
-* ```mysql-server```
-* ```nginx-proxy-manager```
+De forma extra y siendo realizada esta parte tras haber acabado la actividad en sí, he dockerizado y desplegado la aplicación en un servidor VPS propio. Mi entorno de despliegue consiste en tres contenedores:  
+* ```sakila-api```  
+* ```mysql-server```  
+* ```nginx-proxy-manager```  
 
 Para lograr conexión entre todas las partes, he creados dos redes internas: ```sql``` y ```inter```. En la primera red están conectados ```sakila-api``` y ```sql``` para poder intercambiar información entre sí. En la segunda red están conectados ```sakila-api``` y ```nginx-proxy-manager```, consiguiendo desplegar nuestra aplicación hacia Internet sin tener que exponer nuestra propia red interna. Además, usando Nginx agilizo la generación de certificados SSL a través del Certbot de Let's Encrypt.
 
-Explicado esto, el proceso de despliegue es el siguiente: 
-1. Clonar nuestro proyecto de GitHub en el servidor.
-2. Abrir una terminal y navegar hasta el directorio donde se encuentra nuestra app. 
-3. En dicho directorio, crear un archivo ```.env``` y rellenarlo con nuestras variables de entorno.
-4. Ejecutar el comando ```docker compose build --no-cache```.
-5. Cuando el proyecto termine de descargarse y configurarse, deployear la aplicación con el comando ```docker compose up```.
+Explicado esto, el proceso de despliegue es el siguiente:  
+1. Clonar nuestro proyecto de GitHub en el servidor.  
+2. Abrir una terminal y navegar hasta el directorio donde se encuentra nuestra app.  
+3. En dicho directorio, crear un archivo ```.env``` y rellenarlo con nuestras variables de entorno.  
+4. Ejecutar el comando ```docker compose build --no-cache```.  
+5. Cuando el proyecto termine de descargarse y configurarse, deployear la aplicación con el comando ```docker compose up```.  
 
 Con estos pasos, tendríamos nuestra aplicación corriendo en el puerto 8081 de nuestro Docker. Para acceder a la aplicación en sí, accederemos al dashboard de Nginx Proxy Manager y crearemos una redirección de la URL http://sakilaweb-app-1:8001 a la URL de nuestra elección.
 
@@ -345,5 +350,3 @@ En mi caso, y aprovechando un dominio que reservo para este tipo de experimentos
 ## Uso de IA y recursos
 
 Este proyecto ha sido mayoritariamente elaborado guiándome por posts de foros del estilo StackOverflow, así como la documentación oficial de FastAPI. No obstante, para funciones específicas como la sintaxis de la librería de MySQL para Python o el afinado de ciertos elementos de CSS con Bulma se ha usado la inteligencia artificial Claude a modo de corrector, pasándole el script entero y comentando (no corrigiendo directamente) las partes que no le gustaban.
-
----
