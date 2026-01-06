@@ -349,4 +349,4 @@ En mi caso, y aprovechando un dominio que reservo para este tipo de experimentos
 
 ## Uso de IA y recursos
 
-Este proyecto ha sido mayoritariamente elaborado guiándome por posts de foros del estilo StackOverflow, así como la documentación oficial de FastAPI. No obstante, para funciones específicas como la sintaxis de la librería de MySQL para Python o el afinado de ciertos elementos de CSS con Bulma se ha usado la inteligencia artificial Claude a modo de corrector, pasándole el script entero y comentando (no corrigiendo directamente) las partes que no le gustaban.
+Este proyecto ha sido mayoritariamente elaborado guiándome por posts de foros del estilo StackOverflow, así como la documentación oficial de FastAPI. No obstante, para funciones específicas como el solucionado de problemas con los tokens JWT o el afinado final de la documentación con Swagger se ha usado la inteligencia artificial Claude a modo de corrector, pasándole el script entero y comentando (no corrigiendo directamente) las partes que no le gustaban.
