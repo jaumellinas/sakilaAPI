@@ -160,7 +160,7 @@ Los modelos están definidos en `app/schemas/` y controlan la validación de dat
 
 ---
 
-**[Ejemplo A] - Registrar usuario**
+**a]. Registrar usuario**
 
 ```json
 POST /auth/register
@@ -170,8 +170,6 @@ POST /auth/register
   "password": "miquelangelponmeun10"
 }
 ```
-
-**[Ejemplo A] - Respuesta:**
 
 ```json
 {
@@ -184,7 +182,7 @@ POST /auth/register
 
 ---
 
-**[Ejemplo B] - Login**
+**b]. Login**
 
 ```json
 POST /auth/login
@@ -193,8 +191,6 @@ POST /auth/login
   "password": "miquelangelponmeun10"
 }
 ```
-
-**[Ejemplo B] - Respuesta:**
 
 ```json
 {
@@ -222,7 +218,7 @@ POST /auth/login
 
 ---
 
-**[Ejemplo C] - Obtener todos los clientes**
+**c]. Obtener todos los clientes**
 
 ```json
 GET /customers/
@@ -241,7 +237,26 @@ GET /customers/
 
 ---
 
-**[Ejemplo D] - Crear nuevo cliente**
+**d]. Obtener cliente específico**
+
+```json
+GET /customers/84
+{
+  "customer_id": 84,
+  "store_id": 2,
+  "first_name": "SARA",
+  "last_name": "PERRY",
+  "email": "SARA.PERRY@sakilacustomer.org",
+  "address_id": 88,
+  "active": true,
+  "create_date": "2006-02-14T22:04:36",
+  "last_update": "2006-02-15T04:57:20"
+}
+```
+
+---
+
+**e]. Crear nuevo cliente**
 
 ```json
 POST /customers/
@@ -255,8 +270,6 @@ POST /customers/
 }
 ```
 
-**[Ejemplo D] - Respuesta**
-
 ```json
 {
   "customer_id": 46,
@@ -268,6 +281,47 @@ POST /customers/
   "active": true,
   "create_date": "2024-12-02T10:00:00",
   "last_update": "2024-12-02T10:00:00"
+}
+```
+
+---
+
+**f]. Actualizar cliente**
+
+```json
+PUT /customers/601
+{
+  "store_id": 1,
+  "first_name": "Jaume",
+  "last_name": "Llinàs Sansó",
+  "email": "jaume@llinassanso.com",
+  "address_id": 5,
+  "active": false
+}
+```
+
+```json
+{
+  "customer_id": 601,
+  "store_id": 1,
+  "first_name": "Jaume",
+  "last_name": "Llinàs Sansó",
+  "email": "jaume@llinassanso.com",
+  "address_id": 5,
+  "active": false,
+  "create_date": "2025-12-28T13:48:25",
+  "last_update": "2026-01-08T16:04:48"
+}
+```
+
+---
+
+**g]. Eliminar cliente concreto**
+
+```json
+DELETE /customers/601
+{
+  "Cliente eliminado correctamente."
 }
 ```
 
