@@ -18,9 +18,10 @@ Jaume Llinàs Sansó
    1. [Autenticación y usuarios](#1-autenticación-y-usuarios)  
    2. [Clientes (customers)](#2-clientes-customers)  
    3. [Reservas (rentals)](#3-reservas-rentals)  
-7. [Despliegue en local](#despliegue-en-local)  
-8. [Despliegue en entorno cloud](#despliegue-en-entorno-cloud)  
-9. [Uso de IA y recursos](#uso-de-ia-y-recursos)
+7. [Implementación de GraphQL](#implementación-de-graphql)
+8. [Despliegue en local](#despliegue-en-local)  
+9. [Despliegue en entorno cloud](#despliegue-en-entorno-cloud)  
+10. [Uso de IA y recursos](#uso-de-ia-y-recursos)
 
 ## Descripción general
 
@@ -236,7 +237,6 @@ GET /customers/
 ```
 
 ---
-
 **d]. Obtener cliente específico**
 
 ```json
@@ -253,7 +253,6 @@ GET /customers/84
   "last_update": "2006-02-15T04:57:20"
 }
 ```
-
 ---
 
 **e]. Crear nuevo cliente**
@@ -339,7 +338,50 @@ DELETE /customers/601
 
 ---
 
-**[Ejemplo E] - Crear nueva reserva**
+**h]. Listar todas las reservas**
+
+```json
+GET /rentals
+{
+  "rental_id": 16050,
+  "rental_date": "2025-12-28T13:49:23",
+  "inventory_id": 2134,
+  "customer_id": 601,
+  "return_date": "2025-12-28T13:50:10",
+  "staff_id": 2,
+  "last_update": "2025-12-28T13:50:10"
+},
+{
+  "rental_id": 11739,
+  "rental_date": "2006-02-14T15:16:03",
+  "inventory_id": 4568,
+  "customer_id": 373,
+  "return_date": null,
+  "staff_id": 2,
+  "last_update": "2006-02-15T21:30:53"
+}
+```
+
+---
+
+**i]. Devuelve una reserva concreta**
+
+```json
+GET /rentals/16050
+{
+  "rental_id": 16050,
+  "rental_date": "2025-12-28T13:49:23",
+  "inventory_id": 2134,
+  "customer_id": 601,
+  "return_date": "2025-12-28T13:50:10",
+  "staff_id": 2,
+  "last_update": "2025-12-28T13:50:10"
+}
+```
+
+---
+
+**j]. - Crear nueva reserva**
 
 ```json
 POST /rentals/
@@ -350,8 +392,6 @@ POST /rentals/
   "staff_id": 2
 }
 ```
-
-**[Ejemplo E] - Respuesta**
 
 ```json
 {
@@ -364,6 +404,22 @@ POST /rentals/
   "last_update": "2024-12-02T10:00:00"
 }
 ```
+---
+**k]. Eliminar una reserva**
+
+```json
+DELETE /rentals/14023
+{
+  "Reserva eliminada correctamente."
+}
+```
+
+---
+
+## Implementación de GraphQL
+Tras investigar el propósito de GraphQL y analizar los requisitos de este proyecto, hemos llegado a la conclusión inicial de que implementar GraphQL en el mismo sería añadir una capa de complejidad innecesaria al proyecto, ya que de momento nuestra API no es usada en aplicaciones móviles ni recibe muchísimas peticiones simultáneas.
+
+No obstante, si en un futuro el videoclub "sakila" se expandiera de forma considerable y nuestra API _per se_ no diera abasto, sería interesante estudiar la implementación de esta tecnología.
 
 ## Despliegue en local
 
